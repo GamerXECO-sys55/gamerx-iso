@@ -2,3 +2,5 @@
 out/
 *.iso
 *.iso.sig
+# auto-copied from /usr/share/grub at build time
+grub/fonts/

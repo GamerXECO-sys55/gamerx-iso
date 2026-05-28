@@ -15,6 +15,20 @@ if [[ $EUID -ne 0 ]]; then
   exec sudo bash "$0" "$@"
 fi
 
+# --- Pre-build: ensure unicode.pf2 is bundled in the iso grub directory ----
+# Without this, the gating `loadfont unicode.pf2` in grub.cfg fails and the
+# whole graphics + theme stack is skipped (text-mode GRUB → "Arch Linux"
+# fallback). mkarchiso doesn't copy this file automatically.
+if [[ -f /usr/share/grub/unicode.pf2 ]]; then
+  install -dm755 "$REPO_ROOT/grub/fonts"
+  install -m644 /usr/share/grub/unicode.pf2 "$REPO_ROOT/grub/fonts/unicode.pf2"
+elif [[ -f /usr/share/grub/ascii.pf2 ]]; then
+  install -dm755 "$REPO_ROOT/grub/fonts"
+  install -m644 /usr/share/grub/ascii.pf2 "$REPO_ROOT/grub/fonts/unicode.pf2"
+else
+  echo "warning: no unicode.pf2 / ascii.pf2 found on host. GRUB graphics may fall back to text mode."
+fi
+
 echo "=== Building GamerX OS ISO ==="
 echo "  profile : $REPO_ROOT"
 echo "  work    : $WORK_DIR"

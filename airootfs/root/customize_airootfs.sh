@@ -46,11 +46,27 @@ fi
 # --- Plymouth: bake theme into initramfs ------------------------------------
 # This is THE critical step that makes the splash actually show during boot
 # (instead of the 1-2s flash we were getting). -R rebuilds initramfs.
+#
+# CRITICAL: archiso uses /etc/mkinitcpio.conf.d/archiso.conf (NOT
+# /etc/mkinitcpio.conf) — that file ships from the mkinitcpio-archiso package
+# and has NO plymouth hook by default. We patch it here to insert plymouth
+# right after udev, then run mkinitcpio.
+if [[ -f /etc/mkinitcpio.conf.d/archiso.conf ]]; then
+    # 1. Add plymouth hook after udev
+    sed -i -E 's/^HOOKS=\(base udev /HOOKS=(base udev plymouth /' /etc/mkinitcpio.conf.d/archiso.conf
+    # 2. Add KMS modules so framebuffer comes up before plymouth tries to draw
+    if ! grep -q '^MODULES=' /etc/mkinitcpio.conf.d/archiso.conf; then
+        echo 'MODULES=(i915 amdgpu radeon nouveau virtio_gpu qxl bochs)' >> /etc/mkinitcpio.conf.d/archiso.conf
+    fi
+fi
 if command -v plymouth-set-default-theme &>/dev/null; then
     if [[ -d /usr/share/plymouth/themes/gamerx ]]; then
-        plymouth-set-default-theme -R gamerx || \
-            plymouth-set-default-theme gamerx || true
+        plymouth-set-default-theme gamerx || true
     fi
+fi
+# Rebuild ALL initramfs presets so the live ISO actually contains plymouth+theme
+if command -v mkinitcpio &>/dev/null; then
+    mkinitcpio -P || true
 fi
 
 # --- Plymouth handoff units (smooth Plymouth -> SDDM transition) -----------
