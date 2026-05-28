@@ -1,15 +1,14 @@
 # GamerX OS · GRUB theme
-# Designed for 1920x1080. Scales cleanly to 4K via GRUB's gfxmode=auto.
-# Background, fonts, and colors come from this directory; aurora gradient
-# baked into the background image keeps the theme palette-stable across boots.
+# Uses bundled DejaVu fonts (.pf2 files in this directory) so it loads
+# anywhere without depending on host font availability.
 
 title-text:    ""
 title-color:   "#E6EAF8"
-title-font:    "Inter Bold 24"
+title-font:    "DejaVu Sans Bold 14"
 desktop-image: "background.png"
 desktop-color: "#0A0E1A"
 terminal-box:  "terminal_box_*.png"
-terminal-font: "JetBrainsMono Nerd 14"
+terminal-font: "DejaVu Sans 12"
 message-color:        "#E6EAF8"
 message-bg-color:     "#11162A"
 
@@ -20,15 +19,15 @@ message-bg-color:     "#11162A"
     width  = 64%
     height = 50%
 
-    item_font           = "Inter SemiBold 18"
+    item_font           = "DejaVu Sans 14"
     item_color          = "#8A93B8"
-    selected_item_font  = "Inter Bold 18"
+    selected_item_font  = "DejaVu Sans Bold 14"
     selected_item_color = "#E6EAF8"
     icon_width          = 0
     icon_height         = 0
-    item_height         = 48
+    item_height         = 36
     item_padding        = 4
-    item_spacing        = 6
+    item_spacing        = 4
     item_pixmap_style   = "item_*.png"
     selected_item_pixmap_style = "selected_item_*.png"
     scrollbar           = false
@@ -42,7 +41,7 @@ message-bg-color:     "#11162A"
     height= 56
     text  = "GamerX OS"
     color = "#E6EAF8"
-    font  = "Inter Bold 32"
+    font  = "DejaVu Sans Bold 14"
     align = "center"
 }
 
@@ -53,7 +52,7 @@ message-bg-color:     "#11162A"
     height= 24
     text  = "the agentic Arch"
     color = "#7C3AED"
-    font  = "Inter Medium 14"
+    font  = "DejaVu Sans 12"
     align = "center"
 }
 
@@ -63,9 +62,9 @@ message-bg-color:     "#11162A"
     left  = 4%
     width = 92%
     height= 24
-    text  = "↑↓ select   ↵ boot   e edit   c grub shell"
+    text  = "select with arrows · enter to boot · e to edit · c for grub shell"
     color = "#8A93B8"
-    font  = "Inter Medium 12"
+    font  = "DejaVu Sans 10"
     align = "center"
 }
 
