@@ -34,7 +34,6 @@ exfatprogs
 f2fs-tools
 fatresize
 fsarchiver
-gnu-netcat
 gpart
 gpm
 gptfdisk
@@ -96,7 +95,6 @@ pv
 qemu-guest-agent
 refind
 reflector
-reiserfsprogs
 rp-pppoe
 rsync
 rxvt-unicode-terminfo
@@ -124,7 +122,6 @@ usbutils
 vim
 virtualbox-guest-utils-nox
 vpnc
-wezterm-terminfo
 wireless-regdb
 wireless_tools
 wpa_supplicant
@@ -139,11 +136,14 @@ modemmanager
 bluez
 bluez-utils
 
+# ---- Replacements for AUR packages we dropped ------------------------------
+openbsd-netcat                  # replaces gnu-netcat from releng
+
 # ---- Hyprland desktop (for the live preview) ------------------------------
 hyprland
 quickshell
 waybar
-walker
+rofi-wayland
 swaync
 swww
 hyprlock
@@ -163,7 +163,7 @@ fish
 starship
 matugen
 papirus-icon-theme
-bibata-cursor-theme
+bibata-cursor-theme-bin
 ttf-jetbrains-mono-nerd
 ttf-firacode-nerd
 noto-fonts
@@ -190,6 +190,8 @@ snap-pac
 calamares
 ckbcomp
 
+# ---- AUR helpers (from [gamerx-aur]) --------------------------------------
+yay-bin
 # ---- GamerX OS packages (from [gamerx-core]) ------------------------------
 gamerx-keyring
 gamerx-mirrorlist

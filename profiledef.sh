@@ -9,12 +9,11 @@ iso_application="GamerX OS Live/Install"
 iso_version="$(date --date="@${SOURCE_DATE_EPOCH:-$(date +%s)}" +%Y.%m.%d)"
 install_dir="gamerx"
 buildmodes=('iso')
-bootmodes=('bios.syslinux.mbr'
-           'bios.syslinux.eltorito'
-           'uefi-ia32.grub.esp'
-           'uefi-x64.grub.esp'
-           'uefi-ia32.grub.eltorito'
-           'uefi-x64.grub.eltorito')
+# Modernized — modern archiso collapses the old per-firmware modes into
+# 'bios.syslinux' (covers MBR + El Torito) and 'uefi.grub' (covers ESP +
+# El Torito + ia32 + x64).
+bootmodes=('bios.syslinux'
+           'uefi.grub')
 pacman_conf="pacman.conf"
 airootfs_image_type="squashfs"
 airootfs_image_tool_options=('-comp' 'xz' '-Xbcj' 'x86' '-b' '1M' '-Xdict-size' '1M')
