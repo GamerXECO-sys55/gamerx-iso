@@ -91,21 +91,8 @@ cp -rT /etc/skel /home/gamerx 2>/dev/null || true
 chown -R gamerx:gamerx /home/gamerx 2>/dev/null || true
 
 # --- Live welcome + Calamares autostart ------------------------------------
-# Drop a Hyprland custom-snippet that fires off a notification + Calamares
-# a few seconds after first login. Hypr sources ~/.config/hypr/custom/*.
-mkdir -p /home/gamerx/.config/hypr/custom
-cat > /home/gamerx/.config/hypr/custom/00-live.conf <<'EOF'
-# GamerX OS · live ISO welcome + auto-launch installer
-# Removed automatically by gamerx-welcome on the first installed boot.
-
-exec-once = sleep 4 && notify-send -i system-software-install \
-              "Welcome to GamerX OS Live" \
-              "This is the live preview. The installer will open in a moment."
-
-# Auto-launch Calamares 8s after Hyprland comes up.
-exec-once = sleep 8 && pkexec calamares >/dev/null 2>&1 &
-EOF
-chown -R gamerx:gamerx /home/gamerx/.config 2>/dev/null || true
+# Now handled by /usr/bin/gamerx-shell-start which reads /etc/gamerx-live as
+# its mode marker. Nothing to do here — the orchestrator covers it.
 
 # --- Done -------------------------------------------------------------------
 exit 0

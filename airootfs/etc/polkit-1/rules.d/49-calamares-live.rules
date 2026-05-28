@@ -1,0 +1,9 @@
+// GamerX OS · live ISO — let the gamerx user open Calamares without password.
+// Removed automatically once installed (file is shipped only on the live ISO).
+polkit.addRule(function(action, subject) {
+    if ((action.id == "com.github.calamares.calamares.pkexec.run" ||
+         action.id == "org.freedesktop.policykit.exec") &&
+        subject.user == "gamerx") {
+        return polkit.Result.YES;
+    }
+});
