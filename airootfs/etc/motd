@@ -1,0 +1,15 @@
+
+   ╭─────────────────────────────────────────╮
+   │      G a m e r X   O S   ·   Live       │
+   │           the agentic Arch              │
+   ╰─────────────────────────────────────────╯
+
+This is the live environment. Hyprland with the GamerX shell is starting now.
+
+To install GamerX OS, click the "Install GamerX OS" icon on the desktop, or
+run `sudo calamares` from a terminal.
+
+For Wi-Fi: nmtui
+For docs:  https://github.com/GamerXECO-sys55/gamerx-os
+For chat:  not yet — will land in v1.1
+

@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# Bootstraps the live user's GamerX state on first login.
+# Idempotent: safe to run on every login.
+set -euo pipefail
+
+# Init theme state — defaults to gamerx-purple
+if [[ ! -f "$HOME/.config/gamerx/state.toml" ]]; then
+  mkdir -p "$HOME/.config/gamerx"
+  cat > "$HOME/.config/gamerx/state.toml" <<'EOF'
+palette = "gamerx-purple"
+density = "comfortable"
+animation = "smooth"
+launcher = "list"
+bar = "default"
+notification = "default"
+icon_theme = "papirus"
+wallpaper = "/usr/share/gamerx/wallpapers/default/01-aurora-3840x2160.svg"
+EOF
+fi
+
+# Apply once so all components have rendered configs
+gamerx-theme apply >/dev/null 2>&1 || true

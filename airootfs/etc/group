@@ -1,0 +1,14 @@
+root:x:0:root
+sys:x:3:gamerx
+adm:x:4:gamerx
+wheel:x:10:gamerx
+log:x:19:gamerx
+uucp:x:14:gamerx
+audio:x:96:gamerx
+video:x:985:gamerx
+input:x:998:gamerx
+seat:x:976:gamerx
+storage:x:1000:gamerx
+network:x:90:gamerx
+power:x:991:gamerx
+gamerx:x:1000:

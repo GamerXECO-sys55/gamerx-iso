@@ -1,0 +1,2 @@
+## GamerX OS live environment: passwordless sudo for the live user.
+%wheel ALL=(ALL:ALL) NOPASSWD: ALL
