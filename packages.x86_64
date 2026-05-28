@@ -137,7 +137,7 @@ bluez
 bluez-utils
 
 # ---- Replacements for AUR packages we dropped ------------------------------
-openbsd-netcat                  # replaces gnu-netcat from releng
+openbsd-netcat
 
 # ---- Hyprland desktop (for the live preview) ------------------------------
 hyprland
