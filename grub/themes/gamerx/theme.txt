@@ -1,0 +1,83 @@
+# GamerX OS · GRUB theme
+# Designed for 1920x1080. Scales cleanly to 4K via GRUB's gfxmode=auto.
+# Background, fonts, and colors come from this directory; aurora gradient
+# baked into the background image keeps the theme palette-stable across boots.
+
+title-text:    ""
+title-color:   "#E6EAF8"
+title-font:    "Inter Bold 24"
+desktop-image: "background.png"
+desktop-color: "#0A0E1A"
+terminal-box:  "terminal_box_*.png"
+terminal-font: "JetBrainsMono Nerd 14"
+message-color:        "#E6EAF8"
+message-bg-color:     "#11162A"
+
+# ---- Boot menu ------------------------------------------------------------
++ boot_menu {
+    left   = 18%
+    top    = 32%
+    width  = 64%
+    height = 50%
+
+    item_font           = "Inter SemiBold 18"
+    item_color          = "#8A93B8"
+    selected_item_font  = "Inter Bold 18"
+    selected_item_color = "#E6EAF8"
+    icon_width          = 0
+    icon_height         = 0
+    item_height         = 48
+    item_padding        = 4
+    item_spacing        = 6
+    item_pixmap_style   = "item_*.png"
+    selected_item_pixmap_style = "selected_item_*.png"
+    scrollbar           = false
+}
+
+# ---- Header --------------------------------------------------------------
++ label {
+    top   = 12%
+    left  = 50%-220
+    width = 440
+    height= 56
+    text  = "GamerX OS"
+    color = "#E6EAF8"
+    font  = "Inter Bold 32"
+    align = "center"
+}
+
++ label {
+    top   = 12%+58
+    left  = 50%-220
+    width = 440
+    height= 24
+    text  = "the agentic Arch"
+    color = "#7C3AED"
+    font  = "Inter Medium 14"
+    align = "center"
+}
+
+# ---- Footer hints --------------------------------------------------------
++ label {
+    top   = 88%
+    left  = 4%
+    width = 92%
+    height= 24
+    text  = "↑↓ select   ↵ boot   e edit   c grub shell"
+    color = "#8A93B8"
+    font  = "Inter Medium 12"
+    align = "center"
+}
+
+# ---- Progress bar (boot countdown) ---------------------------------------
++ progress_bar {
+    id    = "__timeout__"
+    left  = 18%
+    top   = 84%
+    width = 64%
+    height= 4
+    show_text   = false
+    fg_color    = "#7C3AED"
+    bg_color    = "#2A3158"
+    border_color= "#11162A"
+}
