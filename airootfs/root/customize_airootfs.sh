@@ -90,6 +90,24 @@ fi
 cp -rT /etc/skel /home/gamerx 2>/dev/null || true
 chown -R gamerx:gamerx /home/gamerx 2>/dev/null || true
 
+# --- Wire up Waybar / swaync configs to expected locations ------------------
+# The packages install configs to /usr/share/gamerx-shell/{waybar,swaync}/styles/default/
+# but these tools look in ~/.config/{waybar,swaync}/. Symlink them in skel and
+# the gamerx home so they Just Work on first login.
+for U in /etc/skel /home/gamerx; do
+    install -dm755 "$U/.config/waybar"
+    install -dm755 "$U/.config/swaync"
+    if [[ -f /usr/share/gamerx-shell/waybar/styles/default/config.jsonc ]]; then
+        ln -sf /usr/share/gamerx-shell/waybar/styles/default/config.jsonc "$U/.config/waybar/config.jsonc"
+        ln -sf /usr/share/gamerx-shell/waybar/styles/default/style.css    "$U/.config/waybar/style.css"
+    fi
+    if [[ -f /usr/share/gamerx-shell/swaync/styles/default/config.json ]]; then
+        ln -sf /usr/share/gamerx-shell/swaync/styles/default/config.json "$U/.config/swaync/config.json"
+        ln -sf /usr/share/gamerx-shell/swaync/styles/default/style.css   "$U/.config/swaync/style.css"
+    fi
+done
+chown -R gamerx:gamerx /home/gamerx/.config 2>/dev/null || true
+
 # --- Live welcome + Calamares autostart ------------------------------------
 # Now handled by /usr/bin/gamerx-shell-start which reads /etc/gamerx-live as
 # its mode marker. Nothing to do here — the orchestrator covers it.
