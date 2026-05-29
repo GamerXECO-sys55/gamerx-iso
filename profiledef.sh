@@ -28,5 +28,6 @@ file_permissions=(
   ["/usr/local/bin/choose-mirror"]="0:0:755"
   ["/usr/local/bin/livecd-sound"]="0:0:755"
   ["/usr/local/bin/gamerx-live-autostart"]="0:0:755"
+  ["/usr/local/bin/gamerx-collect-logs"]="0:0:755"
   ["/etc/sudoers.d/g_wheel"]="0:0:440"
 )

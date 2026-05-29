@@ -1,0 +1,116 @@
+#!/usr/bin/env bash
+# GamerX OS · diagnostic log bundler
+#
+# Run this in the live session to collect every relevant log file into a
+# single tarball you can copy to the host (or attach to a bug report).
+#
+# Usage:
+#   gamerx-collect-logs              # bundle to ~/gamerx-logs-<timestamp>.tar.gz
+#   gamerx-collect-logs /mnt/host    # bundle to /mnt/host/gamerx-logs-<...>.tar.gz
+#
+set -euo pipefail
+
+OUT_DIR="${1:-}"
+
+# Auto-detect: if running in QEMU with the 'hostshare' 9p mount tag exposed
+# by scripts/test-qemu.sh, mount it and bundle there.
+if [[ -z "$OUT_DIR" ]]; then
+    if [[ -d /sys/bus/virtio/drivers/9pnet_virtio ]] || grep -q hostshare /proc/mounts 2>/dev/null; then
+        if ! grep -q '/mnt/host' /proc/mounts; then
+            sudo mkdir -p /mnt/host 2>/dev/null || true
+            if sudo mount -t 9p -o trans=virtio,version=9p2000.L hostshare /mnt/host 2>/dev/null; then
+                echo "[*] Auto-mounted QEMU host share at /mnt/host"
+                OUT_DIR=/mnt/host
+            fi
+        else
+            OUT_DIR=/mnt/host
+        fi
+    fi
+fi
+OUT_DIR="${OUT_DIR:-${HOME}}"
+
+TS="$(date +%Y%m%d-%H%M%S)"
+STAGE="$(mktemp -d -t gamerx-logs-XXXXXX)"
+BUNDLE="${OUT_DIR}/gamerx-logs-${TS}.tar.gz"
+
+mkdir -p "$STAGE"
+
+echo "[*] Collecting logs into $STAGE..."
+
+# 1. Orchestrator log (user-side)
+cp -v "${HOME}/.cache/gamerx-shell-start.log" "$STAGE/" 2>/dev/null || \
+    echo "(no gamerx-shell-start.log — orchestrator never ran)" > "$STAGE/00-NO-ORCHESTRATOR-LOG.txt"
+
+# 2. Hyprland log (where Hyprland writes its own events)
+cp -rv "${HOME}/.cache/hyprland" "$STAGE/hyprland-cache" 2>/dev/null || true
+
+# 3. SDDM
+sudo cp -v /var/log/sddm.log "$STAGE/" 2>/dev/null || true
+
+# 4. systemd journal (this boot only) — full and just errors
+journalctl -b > "$STAGE/journal-this-boot.txt" 2>&1 || true
+journalctl -b -p err > "$STAGE/journal-errors.txt" 2>&1 || true
+
+# 5. dmesg (kernel ring buffer)
+sudo dmesg > "$STAGE/dmesg.txt" 2>&1 || dmesg > "$STAGE/dmesg.txt" 2>&1 || true
+
+# 6. Plymouth status
+plymouth-set-default-theme --list > "$STAGE/plymouth-themes.txt" 2>&1 || true
+echo "current: $(plymouth-set-default-theme 2>/dev/null || echo unknown)" >> "$STAGE/plymouth-themes.txt"
+
+# 7. Display manager + greeter status
+systemctl status sddm.service > "$STAGE/sddm-status.txt" 2>&1 || true
+systemctl status display-manager.service > "$STAGE/display-manager-status.txt" 2>&1 || true
+
+# 8. User-side systemd
+systemctl --user status > "$STAGE/user-systemd-status.txt" 2>&1 || true
+
+# 9. Calamares (if it ran)
+sudo cp -v /var/log/Calamares.log "$STAGE/" 2>/dev/null || \
+    cp -v "${HOME}/.cache/Calamares.log" "$STAGE/" 2>/dev/null || true
+
+# 10. Hyprland exec-once dispatch results — useful when autostart is silent
+cp -v "${HOME}/.cache/hyprland/hyprland.log" "$STAGE/" 2>/dev/null || true
+
+# 11. Environment snapshot
+{
+    echo "--- whoami ---"
+    whoami
+    echo "--- env (filtered) ---"
+    env | grep -E '^(USER|HOME|XDG|WAYLAND|HYPR|QT|GDK|GTK)_' | sort
+    echo "--- mountpoints ---"
+    mount | head -40
+    echo "--- pacman ---"
+    pacman -Q | grep -E '(gamerx|hyprland|quickshell|waybar|sddm|plymouth|calamares)' || true
+} > "$STAGE/environment.txt" 2>&1
+
+# 12. Process snapshot — what's actually running
+ps -eo pid,ppid,user,cmd > "$STAGE/processes.txt" 2>&1 || true
+
+# 13. Hyprland config sanity check
+{
+    echo "--- /etc/skel/.config/hypr/hyprland.conf ---"
+    cat /etc/skel/.config/hypr/hyprland.conf 2>/dev/null || echo "(missing)"
+    echo
+    echo "--- ~/.config/hypr/hyprland.conf ---"
+    cat "${HOME}/.config/hypr/hyprland.conf" 2>/dev/null || echo "(missing)"
+} > "$STAGE/hyprland-configs.txt"
+
+# Bundle it all
+tar -czf "$BUNDLE" -C "$STAGE" . 2>&1
+rm -rf "$STAGE"
+
+echo
+echo "================================================================"
+echo "[OK] Logs bundled to: $BUNDLE"
+echo "     Size: $(du -h "$BUNDLE" | cut -f1)"
+echo "================================================================"
+echo
+echo "To copy to host (if QEMU shared folder mounted at /mnt/host):"
+echo "   cp '$BUNDLE' /mnt/host/"
+echo
+echo "Or upload anywhere (e.g. termbin):"
+echo "   cat '$BUNDLE' | nc termbin.com 9999"
+echo
+echo "Or scp to a remote box:"
+echo "   scp '$BUNDLE' user@host:/path/"
