@@ -64,6 +64,12 @@ if command -v plymouth-set-default-theme &>/dev/null; then
         plymouth-set-default-theme gamerx || true
     fi
 fi
+# Belt-and-suspenders: explicitly create the default.plymouth symlink that
+# plymouthd looks for at boot, in case plymouth-set-default-theme didn't.
+if [[ -f /usr/share/plymouth/themes/gamerx/gamerx.plymouth ]]; then
+    ln -sf /usr/share/plymouth/themes/gamerx/gamerx.plymouth \
+           /usr/share/plymouth/themes/default.plymouth
+fi
 # Rebuild ALL initramfs presets so the live ISO actually contains plymouth+theme
 if command -v mkinitcpio &>/dev/null; then
     mkinitcpio -P || true

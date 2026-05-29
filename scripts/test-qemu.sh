@@ -26,6 +26,14 @@ if [[ -z "$ISO" ]]; then
   exit 1
 fi
 
+# Persistent virtual disk so Calamares has somewhere to install. Created on
+# first run (40G qcow2, sparse → ~200 KB until written to).
+VDISK="${OUT_DIR}/gamerx-vm.qcow2"
+if [[ ! -f "$VDISK" ]]; then
+  echo "    Creating 40G virtual disk: $VDISK"
+  qemu-img create -f qcow2 "$VDISK" 40G >/dev/null
+fi
+
 # OVMF firmware paths — different distros put them in different places.
 OVMF_CODE=""
 for c in /usr/share/edk2/x64/OVMF_CODE.4m.fd \
@@ -58,6 +66,7 @@ echo "    Then collect logs:  gamerx-collect-logs /mnt/host"
 QEMU_ARGS=(
   -enable-kvm -cpu host -smp 4 -m 4G
   -drive media=cdrom,file="$ISO",readonly=on
+  -drive if=virtio,format=qcow2,file="$VDISK"
   -boot d
   -device virtio-vga
   -device virtio-net,netdev=n0 -netdev user,id=n0
