@@ -223,3 +223,10 @@ p7zip
 
 # ---- Browser (for the live preview) ---------------------------------------
 firefox
+
+# ---- Tools used by the orchestrator + diagnostics -------------------------
+libnotify
+brightnessctl
+cliphist
+grim
+slurp
