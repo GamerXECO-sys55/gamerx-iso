@@ -35,3 +35,11 @@ echo "  work    : $WORK_DIR"
 echo "  output  : $OUT_DIR"
 
 mkarchiso -v -w "$WORK_DIR" -o "$OUT_DIR" "$REPO_ROOT"
+
+# --- Post-build: hand ownership back to the invoking user ------------------
+# mkarchiso runs as root and creates root-owned files in OUT_DIR. Without this
+# chown back, the user can't write into OUT_DIR (e.g. test-qemu.sh's qemu-share
+# subdir creation fails with EACCES).
+if [[ -n "${SUDO_USER:-}" ]]; then
+  chown -R "${SUDO_USER}:${SUDO_USER}" "$OUT_DIR" "$WORK_DIR" 2>/dev/null || true
+fi

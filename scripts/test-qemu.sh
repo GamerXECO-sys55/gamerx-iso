@@ -12,7 +12,12 @@ set -euo pipefail
 REPO_ROOT="$(cd "$(dirname "$(readlink -f "$0")")/.." && pwd)"
 OUT_DIR="${1:-${REPO_ROOT}/out}"
 SHARE_DIR="${OUT_DIR}/qemu-share"
-mkdir -p "$SHARE_DIR"
+# OUT_DIR may be root-owned from a previous build; handle gracefully.
+if ! mkdir -p "$SHARE_DIR" 2>/dev/null; then
+  echo "warning: $OUT_DIR is not writable by $(whoami) — fixing with sudo"
+  sudo chown -R "$(whoami)":"$(whoami)" "$OUT_DIR"
+  mkdir -p "$SHARE_DIR"
+fi
 chmod 0777 "$SHARE_DIR"
 
 ISO=$(ls -t "$OUT_DIR"/gamerx-os-*.iso 2>/dev/null | head -n1 || true)
